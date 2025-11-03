@@ -18,4 +18,8 @@ Person *--> Name
 Person *--> Phone
 Person *--> Email
 Person *--> Address
+Person *--> Organ
+Person *--> BloodType
+Person *--> Priority
+Person *--> EmergencyContact
 @enduml

@@ -1,0 +1,37 @@
+@startuml
+!pragma layout object
+!include style.puml
+skinparam ArrowFontStyle plain
+title Object Diagram — Runtime View of ImportCommand Excel Integration
+
+' --- Logic Layer ---
+object "<u>i:ImportCommand</u>" as ImportCommand {
+  filePath = "data/import.xlsx"
+}
+
+' --- Model Layer ---
+object "<u>m:Model</u>" as Model
+
+' --- Excel Import Layer ---
+object "<u>eR:ExcelReader</u>" as ExcelReader {
+  state = "Initialized"
+}
+
+object "<u>eP:ExcelParser</u>" as ExcelParser {
+  rowCount = 250
+}
+
+' --- Apache POI Layer (grouped) ---
+package "<u>Apache POI Library</u>" #EAECEE {
+  object "<u>wb:Workbook</u>" as Workbook {
+    sheets = 3
+  }
+}
+
+' --- Relationships ---
+ImportCommand --> ExcelReader : creates >
+ExcelReader --> Workbook : reads from >
+ExcelReader --> ExcelParser : delegates parsing >
+ImportCommand --> Model : adds parsed persons >
+
+@enduml

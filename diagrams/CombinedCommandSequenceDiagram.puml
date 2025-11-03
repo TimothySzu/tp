@@ -1,0 +1,66 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant ":CombinedCommandParser" as CombinedCommandParser LOGIC_COLOR
+participant "c:CombinedCommand" as CombinedCommand LOGIC_COLOR
+participant "r:CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:Model" as Model MODEL_COLOR
+end box
+
+[-> LogicManager : execute("combined n/Alice o/kidney b/O+")
+activate LogicManager
+
+LogicManager -> AddressBookParser : parseCommand("combined n/Alice o/kidney b/O+")
+activate AddressBookParser
+
+create CombinedCommandParser
+AddressBookParser -> CombinedCommandParser : parse("n/Alice o/kidney b/O+")
+activate CombinedCommandParser
+
+create CombinedCommand
+CombinedCommandParser -> CombinedCommand
+activate CombinedCommand
+
+CombinedCommand --> CombinedCommandParser
+deactivate CombinedCommand
+
+CombinedCommandParser --> AddressBookParser : c
+deactivate CombinedCommandParser
+
+'Hidden arrow to position the destroy marker below the end of the activation bar.
+CombinedCommandParser -[hidden]-> AddressBookParser
+destroy CombinedCommandParser
+
+AddressBookParser --> LogicManager : c
+deactivate AddressBookParser
+
+LogicManager -> CombinedCommand : execute(m)
+activate CombinedCommand
+
+CombinedCommand -> Model : updateFilteredPersonList(predicate)
+activate Model
+
+Model --> CombinedCommand
+deactivate Model
+
+create CommandResult
+CombinedCommand -> CommandResult
+activate CommandResult
+
+CommandResult --> CombinedCommand
+deactivate CommandResult
+
+CombinedCommand --> LogicManager : r
+deactivate CombinedCommand
+
+[<--LogicManager
+deactivate LogicManager
+@enduml
+
